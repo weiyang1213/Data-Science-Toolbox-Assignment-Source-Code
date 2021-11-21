@@ -2,6 +2,8 @@
 # Reference: host to heroku https://medium.com/analytics-vidhya/how-to-deploy-a-streamlit-app-with-heroku-5f76a809ec2e
 # Reference: https://hayirici.medium.com/stock-price-prediction-using-machine-learning-algorithms-961e6dce74f2
 
+123
+
 import yfinance as yf
 import streamlit as st
 import datetime
