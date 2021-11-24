@@ -1,6 +1,7 @@
 # Reference: https://github.com/ARGULASAISURAJ/Stock-Price-visualisation-Web-App/blob/master/Visualise_Stock_market_Prices_Google_App.py
 # Reference: host to heroku https://medium.com/analytics-vidhya/how-to-deploy-a-streamlit-app-with-heroku-5f76a809ec2e
 
+# LIbrary We Use for modal traning algorithm , web scarping, show graph and preprocessing
 import yfinance as yf
 import streamlit as st
 import datetime
@@ -26,39 +27,44 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVR 
 import seaborn as sns
 
+#---------------------------------------------------------------------------------------#
+
 st.set_page_config(layout="wide")
 
 st.write('# Stock Price Prediction')
 st.write('### Please enter the stock name and start date you want before using the function. Enjoy!')
 
+# Let User input the stock name
 option = st.text_input('Stock name')
+
 
 st.write('Your selection: ', option)
 tickerSymbol = option
 tickerData = yf.Ticker(tickerSymbol)
-
-
 start='2010-07-23'
+
+
+# Let User input start date and end date was set already until today's date
 start=st.text_input('Start Date format YYYY-MM-DD')
 end=datetime.datetime.today().strftime ('%Y-%m-%d')
-#get data on this ticker
 st.write('From given Start date', start ,'to current Date', end)
-#define the ticker symbol
-
-# -------------
 
 
-#get the historical prices for this ticker
-#reference: https://github.com/mediasittich/Predicting-Stock-Prices-with-Linear-Regression/blob/master/Predicting%20Stock%20Prices%20with%20Linear%20Regression.ipynb
+# -------------------------------------------------------------------------------------#
+
+
+# download yfinance data set for the choosen stock 
+
 if option:
     tickerDf = yf.download(tickerSymbol, period='1d', start=start, end=end)
     testDf = yf.download(tickerSymbol,start = '2012-01-01').dropna()
 
 @st.cache
 def convert_df(df):
-# IMPORTANT: Cache the conversion to prevent computation on every rerun
      return df.to_csv().encode('utf-8')
 
+
+#--------------------------------------------------Function show choosen stock company info & Cash Flow  -----------------------------#
 if st.checkbox('Stock Company Info'):
     st.write('## Company Info')
     st.write(pd.json_normalize(tickerData.info))
@@ -81,6 +87,7 @@ if st.checkbox('Stock Company Info'):
     )
     
 
+#--------------------------------------------------Function show choosen stock data from start data user input until todays date  -----------------------------#
 if st.checkbox('Show stock data'):
     st.write(tickerDf)  
     csv2 = convert_df(tickerDf)
@@ -92,7 +99,7 @@ if st.checkbox('Show stock data'):
     )
 
 
-#--------------------
+#---------------------  Function show different type of chart for the stock data such as: volume, highest price, lowest price & others  -----------------------------#
 if st.checkbox('Show Chart'):
     option = st.selectbox(
      'Please select type of chart',
@@ -180,6 +187,7 @@ if st.checkbox('Show Chart'):
         print('error')
 
 
+#---------------------  Function show stock risk and return analysis for the choosen stock  -----------------------------#
 if st.checkbox('Risk and Return Analysis'):
     st.write("### We use price start from 2012 until yesterday historical data if not value too small")
 
@@ -209,11 +217,13 @@ if st.checkbox('Risk and Return Analysis'):
     moving_avg = cal_sma50_sma100_sma200(df_adj_close)
     st.line_chart(moving_avg)
 
-if st.checkbox('Compare RMSE and R2 Score between different algorithm'):
+#---------------------  Function Compare RMSE and R2 Score between different algorithm to find the best algorithm for stock price prediction  --------------#
+if st.checkbox('Compare RMSE and R2 Score between different algorithm to find the best algorithm for stock price prediction'):
+    
+    
     # Normalize the Data
     # First thing we need to do is to normalize the data with sklearn's MinMaxScaler function. We created a function for it.
 # The data will be scaled between 0 - 1
-
     def normalize_featuresDF(testDf):
 
         scaler = MinMaxScaler()
@@ -288,7 +298,7 @@ if st.checkbox('Compare RMSE and R2 Score between different algorithm'):
     #Method to evaluate the final model with testing data set
     def bestModel_validateResult(model, model_name):
     
-        #I am giving testing set for the evaluation 
+        # Giving testing set for the evaluation 
         model = model(x_train, y_train, x_test)
         prediction = model.predict(x_test)
         
@@ -475,7 +485,9 @@ if st.checkbox('Compare RMSE and R2 Score between different algorithm'):
     st.write('Min RMSE for Test DataSet: ',Test_Model_List['RMSE'].idxmin())
     st.write('\nMax R2_Score for Test DataSet : ',Test_Model_List['R2_Score'].idxmax())
 
-### --- Sentiment Analysis
+
+#---------------------  Function Sentiment Analysis for CNBC stock news  --------------#
+
 title_list = []
 time_list = []
 
@@ -537,7 +549,7 @@ def lemmatize_words(text):
     return " ".join([lemmatizer.lemmatize(word) for word in text.split()])
 df['Stock Title after preprocessing'] = df['Stock Title after preprocessing'].apply(lambda text: lemmatize_words(text))
 
-# -------------- Sentiment Analysis -----
+# -------------- Sentiment Analysis Apply Coding Part -----#
 
 from nltk.sentiment import SentimentIntensityAnalyzer
 vader = SentimentIntensityAnalyzer()
@@ -561,8 +573,9 @@ if st.checkbox('Show Current CNBC News Title and Sentiment Analysis result to an
         mime='text/csv',
     )
 
-st.write('## User Guide')
-video_file = open('Userguide.mp4', 'rb')
-video_bytes = video_file.read()
+# -------------- Show User Guide Video -----#
+#st.write('## User Guide')
+#video_file = open('Userguide.mp4', 'rb')
+#video_bytes = video_file.read()
 
-st.video(video_bytes)
+#st.video(video_bytes)
