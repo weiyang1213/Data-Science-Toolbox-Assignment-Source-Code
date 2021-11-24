@@ -1,8 +1,5 @@
 # Reference: https://github.com/ARGULASAISURAJ/Stock-Price-visualisation-Web-App/blob/master/Visualise_Stock_market_Prices_Google_App.py
 # Reference: host to heroku https://medium.com/analytics-vidhya/how-to-deploy-a-streamlit-app-with-heroku-5f76a809ec2e
-# Reference: https://hayirici.medium.com/stock-price-prediction-using-machine-learning-algorithms-961e6dce74f2
-
-ggggg 2
 
 import yfinance as yf
 import streamlit as st
